@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- SIGNUP PAGE -->
+    <div id="signupPage" class="login-container" style="display: none;">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>📚 Library Management System</h1>
+                <p id="signupTitle">Create Student Account</p>
+                <div class="signup-role-switch" role="tablist" aria-label="Signup role selector">
+                    <button type="button" id="signupStudentBtn" class="signup-role-btn active" onclick="setSignupRole('student')">Student Signup</button>
+                    <button type="button" id="signupAdminBtn" class="signup-role-btn" onclick="setSignupRole('admin')">Admin Signup</button>
+                </div>
+            </div>
+            <form class="login-form" onsubmit="handleSignup(event)">
+                <input type="hidden" id="signupUserType" value="student">
+                <div class="form-group">
+                    <label for="signupID">Admin ID / Student ID</label>
+                    <input type="text" id="signupID" placeholder="e.g., ADM001 or STU12345" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupUsername">Username</label>
+                    <input type="text" id="signupUsername" placeholder="Choose a username" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" required>
+                </div>
+                <div id="studentCourseDiv" class="form-group" style="display: none;">
+                    <label for="signupCourse">Course</label>
+                    <select id="signupCourse" required>
+                        <option value="">-- Select Course --</option>
+                        <option value="B.A. English">B.A. English</option>
+                        <option value="B.A. Hindi">B.A. Hindi</option>
+                        <option value="B.A. History">B.A. History</option>
+                        <option value="B.A. Geography">B.A. Geography</option>
+                        <option value="B.A. Political Science">B.A. Political Science</option>
+                        <option value="B.A. Economics">B.A. Economics</option>
+                        <option value="B.Sc Physics">B.Sc Physics</option>
+                        <option value="B.Sc Chemistry">B.Sc Chemistry</option>
+                        <option value="B.Sc Biology">B.Sc Biology</option>
+                        <option value="B.Sc Mathematics">B.Sc Mathematics</option>
+                        <option value="B.Sc Computer Science">B.Sc Computer Science</option>
+                        <option value="B.Sc Computer Application">B.Sc Computer Application</option>
+                        <option value="Bachelor of Computer Application">BCA</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" placeholder="At least 6 characters" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupConfirmPassword">Confirm Password</label>
+                    <input type="password" id="signupConfirmPassword" required>
+                </div>
+                <button type="submit" class="btn-primary">Create Account</button>
+                <div id="signupError" class="form-error"></div>
+            </form>
+            <p style="text-align: center; margin-top: 20px; color: #888; font-size: 0.9em;">
+                Already have an account? <a href="#" onclick="showLoginPage(event)" style="color: #667eea; text-decoration: none; font-weight: 600;">Login here</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="login-container">
+        <div class="login-box login-portal-box">
+            <div class="login-topbar">
+                <div class="login-brand">Library <span>ERP</span></div>
+                <div class="login-topbar-actions">
+                    <button type="button" class="topbar-btn">Home</button>
+                    <button type="button" class="topbar-btn" onclick="openSignupAs('student')">Student Signup</button>
+                    <button type="button" class="topbar-btn" onclick="openSignupAs('admin')">Admin Signup</button>
+                </div>
+            </div>
+
+            <div class="login-header">
+                <h1>Library Attendance System</h1>
+                <p>A modern, secure platform for seamless library access and real-time tracking.</p>
+            </div>
+
+            <div class="auth-chip-row">
+                <span class="auth-chip"><i class="fas fa-shield-alt"></i> Secure Login</span>
+                <span class="auth-chip"><i class="fas fa-bolt"></i> Real-time Tracking</span>
+                <span class="auth-chip"><i class="fas fa-chart-bar"></i> Analytics</span>
+            </div>
+
+            <div class="portal-grid" id="loginPortalGrid">
+                <button type="button" class="portal-card student" onclick="selectLoginRole('student')">
+                    <div class="portal-icon"><i class="fas fa-user-graduate"></i></div>
+                    <h3>For Students</h3>
+                    <p>View available books, borrow, return, and track your activity.</p>
+                    <span class="portal-cta">Student Portal</span>
+                    <span class="portal-outline-cta">Get Started as Student</span>
+                </button>
+                <button type="button" class="portal-card admin" onclick="selectLoginRole('admin')">
+                    <div class="portal-icon"><i class="fas fa-user-shield"></i></div>
+                    <h3>For Admin</h3>
+                    <p>Manage books, students, lending operations, and dashboard stats.</p>
+                    <span class="portal-cta">Admin Portal</span>
+                    <span class="portal-outline-cta">Get Started as Admin</span>
+                </button>
+            </div>
+
+            <form id="roleLoginForm" class="login-form role-login-form" onsubmit="handleLogin(event)" style="display: none;">
+                <div id="selectedRolePill" class="selected-role-pill">Role Login</div>
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" id="loginUsername" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" id="loginPassword" placeholder="Enter password" required>
+                </div>
+                <div class="role-login-actions">
+                    <button type="submit" class="btn-primary">Login</button>
+                    <button type="button" class="btn-secondary" onclick="resetLoginRole()">Back</button>
+                </div>
+            </form>
+            <div id="loginError" class="login-error"></div>
+
+            <div class="social-login" aria-label="Social networks">
+                <p class="social-text">Connect With Us</p>
+                <div class="social-buttons">
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-btn facebook-btn" title="Facebook" aria-label="Facebook">
+                        <i class="fab fa-facebook-f" aria-hidden="true"></i> Facebook
+                    </a>
+                    <a href="https://google.com" target="_blank" rel="noopener noreferrer" class="social-btn google-btn" title="Google" aria-label="Google">
+                        <i class="fab fa-google" aria-hidden="true"></i> Google
+                    </a>
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-btn instagram-btn" title="Instagram" aria-label="Instagram">
+                        <i class="fab fa-instagram" aria-hidden="true"></i> Instagram
+                    </a>
+                </div>
+            </div>
+            
+            <p style="text-align: center; margin-top: 20px; color: #888; font-size: 0.9em;">
+                Don't have an account? <a href="#" onclick="showSignupPage(event)" style="color: #667eea; text-decoration: none; font-weight: 600;">Sign up here</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- MAIN APPLICATION (Hidden until login) -->
+    <div id="mainApp" class="app-hidden">
+        <div class="container">
+            <header>
+                <h1>📚 College Library Management System</h1>
+                <p class="subtitle">For Students - Manage Books & Borrowing</p>
+                <button class="btn-logout" onclick="handleLogout()">Logout</button>
+            </header>
+
+            <nav class="tabs">
+                <button class="tab-btn active" onclick="showTab('dashboard')">Dashboard</button>
+                <button class="tab-btn" onclick="showTab('books')">Books</button>
+                <button id="studentsTabButton" class="tab-btn" onclick="showTab('students')">Students</button>
+                <button class="tab-btn" onclick="showTab('borrow')">Borrow/Return</button>
+            </nav>
+
+            <div id="dashboard" class="tab-content active">
+                <section class="dashboard-grid">
+                    <div class="stat-card">
+                        <h3>Total Books</h3>
+                        <p class="stat-number" id="totalBooks">15</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Available Books</h3>
+                        <p class="stat-number" id="availableBooks">10</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Borrowed Books</h3>
+                        <p class="stat-number" id="borrowedBooks">5</p>
+                    </div>
+                    <div class="stat-card" id="registeredStudentsCard">
+                        <h3>Registered Students</h3>
+                        <p class="stat-number" id="totalMembers">3</p>
+                    </div>
+                </section>
+
+                <section class="recent-activity">
+                    <h2>Recent Activity</h2>
+                    <div id="activityLog">
+                        <p class="log-entry">System initialized. Ready to manage books and members.</p>
+                    </div>
+                </section>
+            </div>
+
+            <div id="books" class="tab-content">
+                <div class="form-section" id="adminBookManagementSection">
+                    <h2>Add New Book</h2>
+                    <form class="book-form" onsubmit="addBook(event)">
+                        <div class="form-group">
+                            <label>Book ID:</label>
+                            <input type="text" id="bookId" placeholder="e.g., B001" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Title:</label>
+                            <input type="text" id="bookTitle" placeholder="Book Title" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Author:</label>
+                            <input type="text" id="bookAuthor" placeholder="Author Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantity:</label>
+                            <input type="number" id="bookQuantity" placeholder="1" min="1" step="1" inputmode="numeric" pattern="\\d+" required oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+                        </div>
+                        <button type="submit" class="btn-primary">Add Book</button>
+                    </form>
+                </div>
+
+                <div class="search-section">
+                    <h2>Search Books</h2>
+                    <div class="search-group">
+                        <input type="text" id="searchTitle" placeholder="Search by title..." onkeyup="searchBooks()">
+                        <button class="btn-secondary" onclick="clearSearch()">Clear</button>
+                    </div>
+                </div>
+
+                <div class="list-section" id="booksInventorySection">
+                    <h2>Book Inventory</h2>
+                    <table class="books-table">
+                        <thead>
+                            <tr>
+                                <th>Book ID</th>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Total</th>
+                                <th>Available</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="booksList"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="students" class="tab-content">
+                <section id="studentPortalSection" class="student-portal-section">
+                    <div class="student-portal-head">
+                        <h2>Student Portal</h2>
+                    </div>
+
+                    <div class="student-portal-stats" style="display: none;">
+                        <article class="student-portal-stat">
+                            <span>Total Books</span>
+                            <strong id="studentPortalTotalBooks">0</strong>
+                        </article>
+                        <article class="student-portal-stat">
+                            <span>Books Available</span>
+                            <strong id="studentPortalAvailableCount">0</strong>
+                        </article>
+                        <article class="student-portal-stat">
+                            <span>Currently Borrowed</span>
+                            <strong id="studentPortalBorrowedCount">0</strong>
+                        </article>
+                    </div>
+
+                    <div class="student-portal-books-wrap">
+                        <div class="student-portal-section-title">
+                            <h3>Available Books</h3>
+                        </div>
+                        <div id="studentPortalAvailableBooks" class="student-portal-books-grid">
+                            <p class="student-portal-empty">Loading available books...</p>
+                        </div>
+                    </div>
+
+                    <div class="student-portal-quick-wrap">
+                        <div class="student-portal-section-title">
+                            <h3>Others</h3>
+                        </div>
+                        <div class="student-portal-quick-grid">
+                            <button type="button" class="student-quick-card" onclick="showTab('books')">
+                                <i class="fas fa-search"></i>
+                                <span>Search Full Catalog</span>
+                            </button>
+                            <button type="button" class="student-quick-card" onclick="showTab('borrow')">
+                                <i class="fas fa-book-reader"></i>
+                                <span>Borrow or Return</span>
+                            </button>
+                            <button type="button" class="student-quick-card" onclick="showTab('dashboard')">
+                                <i class="fas fa-chart-line"></i>
+                                <span>View Dashboard</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="form-section" id="adminStudentRegistrationSection">
+                    <h2>Register New Student</h2>
+                    <form class="member-form" onsubmit="addStudent(event)">
+                        <div class="form-group">
+                            <label>Student Register No.:</label>
+                            <input type="text" id="memberId" placeholder="e.g., S001" maxlength="13" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Full Name:</label>
+                            <input type="text" id="memberName" placeholder="Full Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" id="memberEmail" placeholder="email@college.edu" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Course:</label>
+                            <select id="memberCourse" required>
+                                <option value="">-- Select Course --</option>
+                                <option value="B.A. English">B.A. English</option>
+                                <option value="B.A. Hindi">B.A. Hindi</option>
+                                <option value="B.A. History">B.A. History</option>
+                                <option value="B.A. Geography">B.A. Geography</option>
+                                <option value="B.A. Political Science">B.A. Political Science</option>
+                                <option value="B.A. Economics">B.A. Economics</option>
+                                <option value="B.Sc Physics">B.Sc Physics</option>
+                                <option value="B.Sc Chemistry">B.Sc Chemistry</option>
+                                <option value="B.Sc Biology">B.Sc Biology</option>
+                                <option value="B.Sc Mathematics">B.Sc Mathematics</option>
+                                <option value="B.Sc Computer Science">B.Sc Computer Science</option>
+                                <option value="B.Sc Computer Application">B.Sc Computer Application</option>
+                                <option value="Bachelor of Computer Application">BCA</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">Register Student</button>
+                    </form>
+                </div>
+
+                <div class="list-section" id="adminStudentsListSection">
+                    <h2>Registered Students</h2>
+                    <table class="members-table">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Course</th>
+                                <th>Status</th>
+                                <th>Last Seen</th>
+                                <th>Books Borrowed</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="membersList"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="borrow" class="tab-content">
+                <div id="adminBorrowActionsSection" class="borrow-return-container">
+                    <div class="form-section">
+                        <h2>Borrow Book</h2>
+                        <form class="borrow-form" onsubmit="borrowBook(event)">
+                            <div class="form-group">
+                                <label>Student ID:</label>
+                                <input type="text" id="borrowMemberId" placeholder="e.g., S001" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Book ID:</label>
+                                <input type="text" id="borrowBookId" placeholder="e.g., B001" required>
+                            </div>
+                            <button type="submit" class="btn-primary">Borrow Book</button>
+                        </form>
+                    </div>
+
+                    <div class="form-section">
+                        <h2>Return Book</h2>
+                        <form class="return-form" onsubmit="returnBook(event)">
+                            <div class="form-group">
+                                <label>Student ID:</label>
+                                <input type="text" id="returnMemberId" placeholder="e.g., S001" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Book ID:</label>
+                                <input type="text" id="returnBookId" placeholder="e.g., B001" required>
+                            </div>
+                            <button type="submit" class="btn-warning">Return Book</button>
+                        </form>
+                    </div>
+
+                    <div class="form-section">
+                        <h2>Renew Book</h2>
+                        <form class="renew-form" onsubmit="renewBook(event)">
+                            <div class="form-group">
+                                <label>Student ID:</label>
+                                <input type="text" id="renewMemberId" placeholder="e.g., S001" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Book ID:</label>
+                                <input type="text" id="renewBookId" placeholder="e.g., B001" required>
+                            </div>
+                            <button type="submit" class="btn-success">Renew Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="list-section" id="studentBorrowLookupSection">
+                    <h2>Student's Borrowed Books</h2>
+                    <div class="search-group">
+                        <input type="text" id="memberSearchId" placeholder="Enter Student ID..." onkeyup="viewMemberBooks()">
+                    </div>
+                    <div id="memberBooksView">
+                        <p>Enter a student ID to view their borrowed books.</p>
+                    </div>
+                </div>
+
+                <div class="list-section" id="studentMyActivitySection" style="display: none;">
+                    <h2>My Borrow/Return/Renew History</h2>
+                    <table class="members-table">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>Book ID</th>
+                                <th>Book Title</th>
+                                <th>Date & Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentActivityBody"></tbody>
+                    </table>
+                    <div id="studentActivityEmpty" style="margin-top: 12px; color: #6c757d; display: none;">
+                        No transaction history available.
+                    </div>
+                </div>
+            </div>
+
+            <div id="notification" class="notification"></div>
+
+            <div id="studentProfileModal" class="student-modal" onclick="closeStudentProfileModal(event)">
+                <div class="student-modal-card" onclick="event.stopPropagation()">
+                    <button type="button" class="student-modal-close" onclick="closeStudentProfileModal()">&times;</button>
+                    <h2 id="studentModalName">Student Name</h2>
+                    <p id="studentModalId" class="student-modal-id">Student ID</p>
+
+                    <div class="student-modal-tags">
+                        <span id="studentModalStatus" class="student-modal-tag">New Student</span>
+                        <span id="studentModalCourse" class="student-modal-tag">Course</span>
+                    </div>
+
+                    <div class="student-modal-divider"></div>
+
+                    <h3 id="studentModalHeading" class="student-modal-heading">Contact Information</h3>
+                    <div class="student-modal-contact-grid">
+                        <div class="student-modal-contact-card">
+                            <label id="studentModalPrimaryLabel">Email</label>
+                            <p id="studentModalPrimaryValue">-</p>
+                        </div>
+                        <div class="student-modal-contact-card">
+                            <label id="studentModalSecondaryLabel">Course</label>
+                            <p id="studentModalSecondaryValue">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
